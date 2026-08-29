@@ -13,7 +13,7 @@ v0.1 的核心验证必须在单机多卡上跑：至少 2 张支持 CUDA P2P �
 
 ## 2. 当前环境限制
 
-初始实现环境记录为没有 `nvcc` 和可用 GPU；本轮也没有运行项目、编译或测试。这里原则上可以做源码审查、构建文件检查和纯 CPU 逻辑测试，但当前实际状态只能声称完成静态审查，不能声称：
+初始实现环境记录为没有 `cmake`、`nvcc` 和可用 GPU。本轮已用 Apple Clang 17 以 `-std=c++17 -Wall -Wextra -Wpedantic -Werror` 直接编译并运行纯 CPU Ring/ticket 模型，结果通过；同时完成了源码静态审查。没有编译或运行 CUDA 库，因此不能声称：
 
 - CUDA 源码已成功编译；
 - kernel 已启动；
@@ -24,7 +24,7 @@ v0.1 的核心验证必须在单机多卡上跑：至少 2 张支持 CUDA P2P �
 
 这些结论必须在 CUDA 主机补验，并记录 GPU 型号、driver/runtime 版本和 P2P matrix。
 
-下面是验收计划，不是已通过清单。当前只存在 CPU Ring model test 源码和一个单次 out-of-place GPU smoke example；bootstrap、完整 API 负向矩阵、单卡和多卡验收仍待实现或运行。
+下面主要是验收计划，不是已通过清单。当前只有 CPU Ring/ticket 模型实际通过；GPU smoke example 仅有源码，bootstrap 测试、完整 API 负向矩阵、单卡和多卡验收仍待实现或运行。
 
 ## 3. 分层矩阵
 

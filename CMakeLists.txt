@@ -14,11 +14,28 @@ if(TNCCL_BUILD_CUDA)
   if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "the tiny-nccl CUDA library supports Linux only")
   endif()
+  if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES OR
+     CMAKE_CUDA_ARCHITECTURES STREQUAL "")
+    message(FATAL_ERROR
+      "Set CMAKE_CUDA_ARCHITECTURES explicitly to the target GPU architecture (70 or newer)")
+  endif()
+  foreach(architecture IN LISTS CMAKE_CUDA_ARCHITECTURES)
+    string(REGEX REPLACE "-(real|virtual)$" "" architecture_number
+      "${architecture}")
+    if(NOT architecture_number MATCHES "^[0-9]+$")
+      message(FATAL_ERROR
+        "CMAKE_CUDA_ARCHITECTURES must contain explicit numeric architectures; got '${architecture}'")
+    endif()
+    if(architecture_number LESS 70)
+      message(FATAL_ERROR
+        "tiny-nccl requires sm_70 or newer; got '${architecture}'")
+    endif()
+  endforeach()
   include(CheckLanguage)
   check_language(CUDA)
   if(CMAKE_CUDA_COMPILER)
     enable_language(CUDA)
-    find_package(CUDAToolkit REQUIRED)
+    find_package(CUDAToolkit 12 REQUIRED)
 
     add_library(tiny_nccl STATIC
       src/api.cc
